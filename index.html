@@ -3,47 +3,87 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Тест для новых сотрудников</title>
+<title>Тесты компьютерного клуба</title>
 <style>
-  body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
-  .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    margin: 0; padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    height: 100vh;
+  }
+  .card {
+    background: white; padding: 20px; border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    max-width: 400px; width: 100%;
+    text-align: center;
+  }
   h2 { margin-top: 0; }
+  .btn {
+    display: block; width: 100%; margin: 10px 0; padding: 12px;
+    border: none; border-radius: 8px; font-size: 16px;
+    cursor: pointer; background: #4facfe; color: white;
+  }
   .answers button {
     display: block; width: 100%; margin: 5px 0; padding: 10px;
-    border: none; border-radius: 5px; background: #eee; cursor: pointer;
+    border: none; border-radius: 8px; background: #eee; cursor: pointer;
   }
-  .answers button.selected { background: #4cafef; color: white; }
+  .answers button.selected { background: #4facfe; color: white; }
   .progress { margin-top: 10px; font-size: 14px; color: #666; }
 </style>
 </head>
 <body>
 
-<div class="card">
+<div class="card" id="startScreen">
+  <h2>Выберите тест</h2>
+  <button class="btn" onclick="startTest('new')">Для новых сотрудников</button>
+  <button class="btn" onclick="startTest('adv')">Для повышения квалификации</button>
+</div>
+
+<div class="card" id="quizScreen" style="display:none;">
   <h2 id="question"></h2>
   <div class="answers" id="answers"></div>
   <div class="progress" id="progress"></div>
-  <button id="nextBtn">Далее</button>
+  <button class="btn" id="nextBtn">Далее</button>
 </div>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-const questions = [
-  { q: 'Как правильно включить компьютер?', options: ['Нажать кнопку питания', 'Дёрнуть за кабель', 'Открыть корпус'], correct: 0 },
-  { q: 'Что делать, если клиент жалуется на медленный интернет?', options: ['Перезапустить роутер', 'Игнорировать', 'Выключить свет'], correct: 0 },
-  // ... добавь остальные 13 вопросов
-];
+const tests = {
+  new: [
+    { q: 'Как правильно включить компьютер?', options: ['Нажать кнопку питания', 'Дёрнуть за кабель', 'Открыть корпус'], correct: 0 },
+    { q: 'Что делать, если клиент жалуется на медленный интернет?', options: ['Проверить соединение', 'Игнорировать', 'Выключить свет'], correct: 0 },
+    // ... остальные вопросы для новых
+  ],
+  adv: [
+    { q: 'Что такое G-Sync?', options: ['Технология синхронизации кадров', 'Видеокарта', 'Монитор'], correct: 0 },
+    { q: 'Какой тип SSD быстрее?', options: ['NVMe', 'SATA', 'HDD'], correct: 0 },
+    // ... остальные вопросы для повышения
+  ]
+};
 
+let currentTest = [];
 let current = 0;
 let score = 0;
 let selected = null;
 
+const startScreen = document.getElementById('startScreen');
+const quizScreen = document.getElementById('quizScreen');
 const qEl = document.getElementById('question');
 const aEl = document.getElementById('answers');
 const pEl = document.getElementById('progress');
 const nextBtn = document.getElementById('nextBtn');
 
+function startTest(type) {
+  currentTest = tests[type];
+  current = 0; score = 0; selected = null;
+  startScreen.style.display = 'none';
+  quizScreen.style.display = 'block';
+  loadQuestion();
+}
+
 function loadQuestion() {
-  const q = questions[current];
+  const q = currentTest[current];
   qEl.textContent = q.q;
   aEl.innerHTML = '';
   q.options.forEach((opt, i) => {
@@ -56,22 +96,20 @@ function loadQuestion() {
     };
     aEl.appendChild(btn);
   });
-  pEl.textContent = `Вопрос ${current+1} из ${questions.length}`;
+  pEl.textContent = `Вопрос ${current+1} из ${currentTest.length}`;
 }
 
 nextBtn.onclick = () => {
   if (selected === null) return alert('Выберите ответ!');
-  if (selected === questions[current].correct) score++;
+  if (selected === currentTest[current].correct) score++;
   selected = null;
   current++;
-  if (current < questions.length) {
+  if (current < currentTest.length) {
     loadQuestion();
   } else {
-    Telegram.WebApp.sendData(JSON.stringify({ testType: 'new_user', score, total: questions.length }));
+    Telegram.WebApp.sendData(JSON.stringify({ score, total: currentTest.length }));
   }
 };
-
-loadQuestion();
 </script>
 
 </body>
