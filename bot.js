@@ -1,8 +1,11 @@
 import TelegramBot from 'node-telegram-bot-api';
 
 // === Настройки ===
-const token = process.env.BOT_TOKEN; // вставь сюда свой токен
-const webAppUrl = process.env.WEBAPP_URL; // ссылка на твой тест
+import 'dotenv/config';
+
+const token = process.env.BOT_TOKEN;
+const webAppUrl = process.env.WEBAPP_URL;
+
 
 // === Инициализация бота ===
 const bot = new TelegramBot(token, { polling: true });
