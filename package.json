@@ -1,13 +1,19 @@
 {
-  "name": "tg-bot",
+  "name": "tg-miniapp",
   "version": "1.0.0",
-  "type": "module",
+  "description": "Telegram bot with WebApp support",
   "main": "bot.js",
+  "type": "module",
   "scripts": {
-    "start": "node bot.js"
+    "start": "node bot.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "node-telegram-bot-api": "^0.61.0",
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.0.0",
+    "express": "^4.19.2",
+    "node-telegram-bot-api": "^0.66.0"
   }
 }
