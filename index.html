@@ -3,38 +3,20 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Тесты компьютерного клуба</title>
+<title>Тесты</title>
 <style>
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
-    margin: 0; padding: 0;
-    display: flex; align-items: center; justify-content: center;
-    height: 100vh;
-  }
-  .card {
-    background: white; padding: 20px; border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    max-width: 400px; width: 100%;
-    text-align: center;
-  }
-  h2 { margin-top: 0; }
-  .btn {
-    display: block; width: 100%; margin: 10px 0; padding: 12px;
-    border: none; border-radius: 8px; font-size: 16px;
-    cursor: pointer; background: #4facfe; color: white;
-  }
-  .answers button {
-    display: block; width: 100%; margin: 5px 0; padding: 10px;
-    border: none; border-radius: 8px; background: #eee; cursor: pointer;
-  }
+  body { font-family: sans-serif; background: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+  .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); max-width: 420px; width: 100%; text-align: center; }
+  .btn { display: block; width: 100%; margin: 10px 0; padding: 12px; background: #4facfe; color: white; border: none; border-radius: 8px; cursor: pointer; }
+  .btn:hover { background: #3a8dde; }
+  .answers button { display: block; width: 100%; margin: 6px 0; padding: 10px; border: none; border-radius: 8px; background: #eee; cursor: pointer; }
   .answers button.selected { background: #4facfe; color: white; }
   .progress { margin-top: 10px; font-size: 14px; color: #666; }
 </style>
 </head>
 <body>
 
-<!-- Экран выбора теста -->
+<!-- Экран выбора -->
 <div class="card" id="startScreen">
   <h2>Выберите тест</h2>
   <button class="btn" onclick="startTest('new')">Для новых сотрудников</button>
@@ -49,25 +31,25 @@
   <button class="btn" id="nextBtn">Далее</button>
 </div>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
+/* ——— Данные тестов ——— */
 const tests = {
   new: [
-    { q: 'Как правильно включить компьютер?', options: ['Нажать кнопку питания', 'Дёрнуть за кабель', 'Открыть корпус'], correct: 0 },
-    { q: 'Что делать, если клиент жалуется на медленный интернет?', options: ['Проверить соединение', 'Игнорировать', 'Выключить свет'], correct: 0 },
-    { q: 'Как проверить, подключена ли мышь и клавиатура?', options: ['Проверить кабели', 'Потрясти стол', 'Перезагрузить роутер'], correct: 0 },
-    { q: 'Что нужно сделать перед началом смены?', options: ['Проверить оборудование', 'Сразу уйти домой', 'Включить музыку'], correct: 0 },
-    { q: 'Как подключить наушники с микрофоном?', options: ['В нужные разъёмы', 'В USB-порт мыши', 'В розетку'], correct: 0 },
-    { q: 'Что делать, если игра не запускается?', options: ['Перезапустить компьютер', 'Удалить Windows', 'Игнорировать'], correct: 0 },
+    { q: 'Что нужно сделать первым делом перед началом смены?', options: ['Проверить оборудование', 'Сразу включить музыку', 'Сделать кофе'], correct: 0 },
+    { q: 'Как правильно поприветствовать клиента?', options: ['Молча кивнуть', 'Вежливо поздороваться', 'Спросить, зачем пришёл'], correct: 1 },
+    { q: 'Что делать, если клиент жалуется на шум?', options: ['Игнорировать', 'Постараться устранить причину', 'Сделать музыку громче'], correct: 1 },
+    { q: 'Как проверить, работает ли гарнитура?', options: ['Потрясти её', 'Проверить звук в настройках', 'Постучать по микрофону'], correct: 1 },
+    { q: 'Что делать, если игра не запускается?', options: ['Перезапустить компьютер', 'Удалить Windows', 'Сказать, что не знаете'], correct: 0 },
+    { q: 'Как действовать при конфликте между клиентами?', options: ['Разнять конфликт', 'Снимать на телефон', 'Уйти'], correct: 0 },
+    { q: 'Что делать, если клиент забыл выйти из аккаунта?', options: ['Выйти из аккаунта', 'Сменить пароль', 'Удалить игру'], correct: 0 },
     { q: 'Как проверить баланс клиента?', options: ['Зайти в аккаунт', 'Спросить у соседа', 'Открыть калькулятор'], correct: 0 },
     { q: 'Что делать, если пролили напиток на клавиатуру?', options: ['Отключить питание', 'Продолжить играть', 'Поставить сушиться на батарею'], correct: 0 },
     { q: 'Как завершить работу компьютера?', options: ['Выбрать "Завершение работы"', 'Выдернуть кабель', 'Нажать Reset'], correct: 0 },
-    { q: 'Что делать, если монитор не показывает изображение?', options: ['Проверить кабель', 'Поменять обои', 'Выключить свет'], correct: 0 },
     { q: 'Как вежливо попросить клиента освободить место?', options: ['Попросить вежливо', 'Крикнуть', 'Выключить компьютер'], correct: 0 },
-    { q: 'Что делать, если клиент забыл выйти из аккаунта?', options: ['Выйти из аккаунта', 'Сменить пароль', 'Удалить игру'], correct: 0 },
-    { q: 'Как проверить, работает ли гарнитура?', options: ['Проверить звук', 'Потрясти её', 'Постучать'], correct: 0 },
-    { q: 'Что делать, если клиент жалуется на шум?', options: ['Сделать замечание', 'Игнорировать', 'Включить музыку громче'], correct: 0 },
-    { q: 'Как действовать при конфликте между клиентами?', options: ['Разнять конфликт', 'Снимать на телефон', 'Уйти'], correct: 0 }
+    { q: 'Что делать, если монитор не показывает изображение?', options: ['Проверить кабель', 'Поменять обои', 'Выключить свет'], correct: 0 },
+    { q: 'Как подключить наушники с микрофоном?', options: ['В нужные разъёмы', 'В USB-порт мыши', 'В розетку'], correct: 0 },
+    { q: 'Что делать, если клиент жалуется на медленный интернет?', options: ['Проверить соединение', 'Игнорировать', 'Выключить свет'], correct: 0 },
+    { q: 'Как проверить, подключена ли мышь и клавиатура?', options: ['Проверить кабели', 'Потрясти стол', 'Перезагрузить роутер'], correct: 0 }
   ],
   adv: [
     { q: 'Что такое G-Sync?', options: ['Технология синхронизации кадров', 'Видеокарта', 'Монитор'], correct: 0 },
@@ -88,28 +70,64 @@ const tests = {
   ]
 };
 
+/* ——— Состояние и элементы ——— */
 let currentTest = [];
 let current = 0;
 let score = 0;
 let selected = null;
 
 const startScreen = document.getElementById('startScreen');
-const quizScreen = document.getElementById('quizScreen');
+const quizScreen   = document.getElementById('quizScreen');
 const qEl = document.getElementById('question');
 const aEl = document.getElementById('answers');
 const pEl = document.getElementById('progress');
 const nextBtn = document.getElementById('nextBtn');
 
-function startTest(type) {
-  currentTest = tests[type];
+/* ——— Функции ——— */
+function _startTest(type) {
+  currentTest = tests[type] || [];
+  if (!currentTest.length) {
+    alert('Тест не найден');
+    return;
+  }
   current = 0; score = 0; selected = null;
   startScreen.style.display = 'none';
   quizScreen.style.display = 'block';
   loadQuestion();
 }
-
 function loadQuestion() {
   const q = currentTest[current];
   qEl.textContent = q.q;
   aEl.innerHTML = '';
-  q
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.textContent = opt;
+    btn.onclick = () => {
+      document.querySelectorAll('.answers button').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selected = i;
+    };
+    aEl.appendChild(btn);
+  });
+  pEl.textContent = `Вопрос ${current + 1} из ${currentTest.length}`;
+}
+nextBtn.onclick = () => {
+  if (selected === null) return alert('Выберите ответ!');
+  if (selected === currentTest[current].correct) score++;
+  selected = null;
+  current++;
+  if (current < currentTest.length) {
+    loadQuestion();
+  } else {
+    alert(`Тест завершён! Результат: ${score} из ${currentTest.length}`);
+    quizScreen.style.display = 'none';
+    startScreen.style.display = 'block';
+  }
+};
+
+/* ——— ВЫКЛАДЫВАЕМ в window, чтобы работал onclick в HTML ——— */
+window.startTest = _startTest;
+</script>
+
+</body>
+</html>
