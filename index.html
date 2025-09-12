@@ -3,129 +3,113 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Тест для новых сотрудников</title>
+<title>Тесты компьютерного клуба</title>
 <style>
   body {
     font-family: 'Segoe UI', sans-serif;
     background: linear-gradient(135deg, #4facfe, #00f2fe);
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    margin: 0; padding: 0;
+    display: flex; align-items: center; justify-content: center;
     height: 100vh;
   }
   .card {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
+    background: white; padding: 20px; border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    max-width: 400px;
-    width: 100%;
+    max-width: 400px; width: 100%;
+    text-align: center;
   }
   h2 { margin-top: 0; }
+  .btn {
+    display: block; width: 100%; margin: 10px 0; padding: 12px;
+    border: none; border-radius: 8px; font-size: 16px;
+    cursor: pointer; background: #4facfe; color: white;
+  }
   .answers button {
-    display: block;
-    width: 100%;
-    margin: 5px 0;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    background: #eee;
-    cursor: pointer;
-    font-size: 16px;
+    display: block; width: 100%; margin: 5px 0; padding: 10px;
+    border: none; border-radius: 8px; background: #eee; cursor: pointer;
   }
-  .answers button.selected {
-    background: #4facfe;
-    color: white;
-  }
-  .progress {
-    margin-top: 10px;
-    font-size: 14px;
-    color: #666;
-  }
-  #nextBtn {
-    margin-top: 15px;
-    width: 100%;
-    padding: 12px;
-    background: #4facfe;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-  }
+  .answers button.selected { background: #4facfe; color: white; }
+  .progress { margin-top: 10px; font-size: 14px; color: #666; }
 </style>
 </head>
 <body>
 
-<div class="card">
+<!-- Экран выбора теста -->
+<div class="card" id="startScreen">
+  <h2>Выберите тест</h2>
+  <button class="btn" onclick="startTest('new')">Для новых сотрудников</button>
+  <button class="btn" onclick="startTest('adv')">Для повышения квалификации</button>
+</div>
+
+<!-- Экран теста -->
+<div class="card" id="quizScreen" style="display:none;">
   <h2 id="question"></h2>
   <div class="answers" id="answers"></div>
   <div class="progress" id="progress"></div>
-  <button id="nextBtn">Далее</button>
+  <button class="btn" id="nextBtn">Далее</button>
 </div>
 
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-const questions = [
-  { q: 'Как правильно включить компьютер?', options: ['Нажать кнопку питания', 'Дёрнуть за кабель', 'Открыть корпус'], correct: 0 },
-  { q: 'Что делать, если клиент жалуется на медленный интернет?', options: ['Проверить соединение', 'Игнорировать', 'Выключить свет'], correct: 0 },
-  { q: 'Как проверить, подключена ли мышь и клавиатура?', options: ['Проверить кабели', 'Потрясти стол', 'Перезагрузить роутер'], correct: 0 },
-  { q: 'Что нужно сделать перед началом смены?', options: ['Проверить оборудование', 'Сразу уйти домой', 'Включить музыку'], correct: 0 },
-  { q: 'Как подключить наушники с микрофоном?', options: ['В нужные разъёмы', 'В USB-порт мыши', 'В розетку'], correct: 0 },
-  { q: 'Что делать, если игра не запускается?', options: ['Перезапустить компьютер', 'Удалить Windows', 'Игнорировать'], correct: 0 },
-  { q: 'Как проверить баланс клиента?', options: ['Зайти в аккаунт', 'Спросить у соседа', 'Открыть калькулятор'], correct: 0 },
-  { q: 'Что делать, если пролили напиток на клавиатуру?', options: ['Отключить питание', 'Продолжить играть', 'Поставить сушиться на батарею'], correct: 0 },
-  { q: 'Как завершить работу компьютера?', options: ['Выбрать "Завершение работы"', 'Выдернуть кабель', 'Нажать Reset'], correct: 0 },
-  { q: 'Что делать, если монитор не показывает изображение?', options: ['Проверить кабель', 'Поменять обои', 'Выключить свет'], correct: 0 },
-  { q: 'Как вежливо попросить клиента освободить место?', options: ['Попросить вежливо', 'Крикнуть', 'Выключить компьютер'], correct: 0 },
-  { q: 'Что делать, если клиент забыл выйти из аккаунта?', options: ['Выйти из аккаунта', 'Сменить пароль', 'Удалить игру'], correct: 0 },
-  { q: 'Как проверить, работает ли гарнитура?', options: ['Проверить звук', 'Потрясти её', 'Постучать'], correct: 0 },
-  { q: 'Что делать, если клиент жалуется на шум?', options: ['Сделать замечание', 'Игнорировать', 'Включить музыку громче'], correct: 0 },
-  { q: 'Как действовать при конфликте между клиентами?', options: ['Разнять конфликт', 'Снимать на телефон', 'Уйти'], correct: 0 }
-];
+const tests = {
+  new: [
+    { q: 'Как правильно включить компьютер?', options: ['Нажать кнопку питания', 'Дёрнуть за кабель', 'Открыть корпус'], correct: 0 },
+    { q: 'Что делать, если клиент жалуется на медленный интернет?', options: ['Проверить соединение', 'Игнорировать', 'Выключить свет'], correct: 0 },
+    { q: 'Как проверить, подключена ли мышь и клавиатура?', options: ['Проверить кабели', 'Потрясти стол', 'Перезагрузить роутер'], correct: 0 },
+    { q: 'Что нужно сделать перед началом смены?', options: ['Проверить оборудование', 'Сразу уйти домой', 'Включить музыку'], correct: 0 },
+    { q: 'Как подключить наушники с микрофоном?', options: ['В нужные разъёмы', 'В USB-порт мыши', 'В розетку'], correct: 0 },
+    { q: 'Что делать, если игра не запускается?', options: ['Перезапустить компьютер', 'Удалить Windows', 'Игнорировать'], correct: 0 },
+    { q: 'Как проверить баланс клиента?', options: ['Зайти в аккаунт', 'Спросить у соседа', 'Открыть калькулятор'], correct: 0 },
+    { q: 'Что делать, если пролили напиток на клавиатуру?', options: ['Отключить питание', 'Продолжить играть', 'Поставить сушиться на батарею'], correct: 0 },
+    { q: 'Как завершить работу компьютера?', options: ['Выбрать "Завершение работы"', 'Выдернуть кабель', 'Нажать Reset'], correct: 0 },
+    { q: 'Что делать, если монитор не показывает изображение?', options: ['Проверить кабель', 'Поменять обои', 'Выключить свет'], correct: 0 },
+    { q: 'Как вежливо попросить клиента освободить место?', options: ['Попросить вежливо', 'Крикнуть', 'Выключить компьютер'], correct: 0 },
+    { q: 'Что делать, если клиент забыл выйти из аккаунта?', options: ['Выйти из аккаунта', 'Сменить пароль', 'Удалить игру'], correct: 0 },
+    { q: 'Как проверить, работает ли гарнитура?', options: ['Проверить звук', 'Потрясти её', 'Постучать'], correct: 0 },
+    { q: 'Что делать, если клиент жалуется на шум?', options: ['Сделать замечание', 'Игнорировать', 'Включить музыку громче'], correct: 0 },
+    { q: 'Как действовать при конфликте между клиентами?', options: ['Разнять конфликт', 'Снимать на телефон', 'Уйти'], correct: 0 }
+  ],
+  adv: [
+    { q: 'Что такое G-Sync?', options: ['Технология синхронизации кадров', 'Видеокарта', 'Монитор'], correct: 0 },
+    { q: 'Какой тип SSD быстрее?', options: ['NVMe', 'SATA', 'HDD'], correct: 0 },
+    { q: 'Что делает функция Overclocking?', options: ['Увеличивает частоту работы', 'Снижает температуру', 'Отключает питание'], correct: 0 },
+    { q: 'Что такое DPI у мыши?', options: ['Чувствительность', 'Размер', 'Вес'], correct: 0 },
+    { q: 'Какой кабель нужен для 144 Гц при 1080p?', options: ['DisplayPort', 'VGA', 'DVI'], correct: 0 },
+    { q: 'Что делает термопаста?', options: ['Отводит тепло', 'Передаёт электричество', 'Увеличивает FPS'], correct: 0 },
+    { q: 'Что такое ping?', options: ['Задержка соединения', 'Скорость загрузки', 'Размер пакета'], correct: 0 },
+    { q: 'Какой блок питания нужен для RTX 3080?', options: ['750W', '300W', '500W'], correct: 0 },
+    { q: 'Что такое refresh rate?', options: ['Частота обновления экрана', 'Скорость интернета', 'Температура процессора'], correct: 0 },
+    { q: 'Какой разъём у современных видеокарт?', options: ['PCI Express', 'AGP', 'ISA'], correct: 0 },
+    { q: 'Что делает функция V-Sync?', options: ['Синхронизирует FPS с монитором', 'Увеличивает яркость', 'Снижает громкость'], correct: 0 },
+    { q: 'Что такое bottleneck в ПК?', options: ['Узкое место в производительности', 'Тип кулера', 'Разъём питания'], correct: 0 },
+    { q: 'Какой формат оперативной памяти используется сейчас?', options: ['DDR4/DDR5', 'SDRAM', 'DDR2'], correct: 0 },
+    { q: 'Что такое Ray Tracing?', options: ['Трассировка лучей', 'Метод охлаждения', 'Тип кабеля'], correct: 0 },
+    { q: 'Что делает функция HDR?', options: ['Улучшает контраст и цвета', 'Увеличивает FPS', 'Снижает задержку'], correct: 0 }
+  ]
+};
 
+let currentTest = [];
 let current = 0;
 let score = 0;
 let selected = null;
 
+const startScreen = document.getElementById('startScreen');
+const quizScreen = document.getElementById('quizScreen');
 const qEl = document.getElementById('question');
 const aEl = document.getElementById('answers');
 const pEl = document.getElementById('progress');
 const nextBtn = document.getElementById('nextBtn');
 
-function loadQuestion() {
-  const q = questions[current];
-  qEl.textContent = q.q;
-  aEl.innerHTML = '';
-  q.options.forEach((opt, i) => {
-    const btn = document.createElement('button');
-    btn.textContent = opt;
-    btn.onclick = () => {
-      document.querySelectorAll('.answers button').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      selected = i;
-    };
-    aEl.appendChild(btn);
-  });
-  pEl.textContent = `Вопрос ${current+1} из ${questions.length}`;
+function startTest(type) {
+  currentTest = tests[type];
+  current = 0; score = 0; selected = null;
+  startScreen.style.display = 'none';
+  quizScreen.style.display = 'block';
+  loadQuestion();
 }
 
-nextBtn.onclick = () => {
-  if (selected === null) return alert('Выберите ответ!');
-  if (selected === questions[current].correct) score++;
-  selected = null;
-  current++;
-  if (current < questions.length) {
-    loadQuestion();
-  } else {
-    Telegram.WebApp.sendData(JSON.stringify({ testType: 'new_user', score, total: questions.length }));
-  }
-};
-
-loadQuestion();
-</script>
-
-</body>
-</html>
+function loadQuestion() {
+  const q = currentTest[current];
+  qEl.textContent = q.q;
+  aEl.innerHTML = '';
+  q
