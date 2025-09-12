@@ -119,9 +119,17 @@ nextBtn.onclick = () => {
   if (current < currentTest.length) {
     loadQuestion();
   } else {
-    alert(`Тест завершён! Результат: ${score} из ${currentTest.length}`);
-    quizScreen.style.display = 'none';
-    startScreen.style.display = 'block';
+    if (window.Telegram && Telegram.WebApp) {
+  Telegram.WebApp.sendData(JSON.stringify({
+    score: score,
+    total: currentTest.length
+  }));
+} else {
+  alert(`Тест завершён! Результат: ${score} из ${currentTest.length}`);
+}
+quizScreen.style.display = 'none';
+startScreen.style.display = 'block';
+
   }
 };
 
