@@ -1,11 +1,10 @@
+import express from 'express';
 import TelegramBot from 'node-telegram-bot-api';
-
-// === Настройки ===
 import 'dotenv/config';
 
+// === Настройки ===
 const token = process.env.BOT_TOKEN;
 const webAppUrl = process.env.WEBAPP_URL;
-
 
 // === Инициализация бота ===
 const bot = new TelegramBot(token, { polling: true });
@@ -35,3 +34,10 @@ bot.on('message', (msg) => {
     }
   }
 });
+
+// === Мини‑сервер для Render ===
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.get('/', (req, res) => res.send('Bot is running'));
+app.listen(port, () => console.log(`Server listening on port ${port}`));
