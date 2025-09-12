@@ -1,8 +1,8 @@
 import TelegramBot from 'node-telegram-bot-api';
 
 // === Настройки ===
-const token = '8316920165:AAHL2YvXYr2TuftvVpfEnGkBQgCrdvkgAUc'; // вставь сюда свой токен
-const webAppUrl = 'https://matveyyy616.github.io/tg-miniapp/'; // ссылка на твой тест
+const token = process.env.BOT_TOKEN; // вставь сюда свой токен
+const webAppUrl = process.env.WEBAPP_URL; // ссылка на твой тест
 
 // === Инициализация бота ===
 const bot = new TelegramBot(token, { polling: true });
