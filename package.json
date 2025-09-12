@@ -1,16 +1,13 @@
 {
-  "name": "tg-miniapp",
+  "name": "tg-bot",
   "version": "1.0.0",
-  "description": "",
+  "type": "module",
   "main": "bot.js",
-  "type": "module",  
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node bot.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "node-telegram-bot-api": "^0.66.0"
+    "node-telegram-bot-api": "^0.61.0",
+    "dotenv": "^16.0.0"
   }
 }
