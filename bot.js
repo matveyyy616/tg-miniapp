@@ -1,8 +1,11 @@
 import TelegramBot from 'node-telegram-bot-api';
 import express from 'express';
+import dotenv from 'dotenv';
 
-const token = process.env.BOT_TOKEN; // токен из BotFather
-const bot = new TelegramBot(token, { polling: false }); // polling отключен
+dotenv.config();
+
+const token = process.env.BOT_TOKEN;
+const bot = new TelegramBot(token, { polling: false });
 
 const app = express();
 app.use(express.json());
@@ -17,9 +20,20 @@ app.post(`/bot${token}`, (req, res) => {
   res.sendStatus(200);
 });
 
-// Команда /start
+// Команда /start с кнопкой для мини‑аппы
 bot.onText(/\/start/, (msg) => {
-  bot.sendMessage(msg.chat.id, 'Привет! Я бот ПК‑клуба 🚀');
+  bot.sendMessage(msg.chat.id, 'Привет! Вот твоя мини‑аппа 🚀', {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: 'Открыть мини‑приложение',
+            web_app: { url: process.env.WEBAPP_URL }
+          }
+        ]
+      ]
+    }
+  });
 });
 
 // Пример реакции на слово "тест"
