@@ -22,7 +22,7 @@ app.post(`/bot${token}`, (req, res) => {
 
 // Команда /start с кнопкой для мини‑аппы
 bot.onText(/\/start/, (msg) => {
-  bot.sendMessage(msg.chat.id, 'Привет! Вот твоя мини‑аппа 🚀', {
+  bot.sendMessage(msg.chat.id, 'Привет, вот тест', {
     reply_markup: {
       inline_keyboard: [
         [
