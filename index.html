@@ -3,86 +3,129 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Тесты</title>
+<title>Тесты ПК‑Клуба</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
 body {
-  font-family: Arial, sans-serif;
-  background: #f5f5f5;
-  color: #222;
+  font-family: 'Orbitron', sans-serif;
+  background: radial-gradient(circle at top, #0f2027, #203a43, #2c5364);
+  color: #e0e0e0;
   display: flex;
   justify-content: center;
   padding: 20px;
   margin: 0;
+  min-height: 100vh;
 }
 .card {
-  background: #fff;
+  background: rgba(20, 20, 30, 0.85);
+  backdrop-filter: blur(8px);
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  max-width: 600px;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0,255,200,0.2);
+  max-width: 650px;
   width: 100%;
   animation: fadeIn 0.4s ease;
+  border: 1px solid rgba(0, 234, 255, 0.15);
 }
 h2 {
   font-size: 1.4rem;
   margin-bottom: 15px;
+  color: #00eaff;
+  letter-spacing: 0.5px;
 }
 .btn {
   display: block;
   width: 100%;
   margin: 8px 0;
   padding: 12px;
-  background: #007bff;
-  color: #fff;
-  border: none;
+  background: transparent;
+  color: #00ff88;
+  border: 2px solid #00ff88;
   border-radius: 6px;
   cursor: pointer;
   font-size: 1rem;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  text-transform: uppercase;
 }
-.btn:hover { background: #0056b3; }
+.btn:hover {
+  background: #00ff88;
+  color: #000;
+  box-shadow: 0 0 10px #00ff88;
+}
 .answers button {
   display: block;
   width: 100%;
   margin: 6px 0;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid rgba(0,255,200,0.3);
   border-radius: 6px;
-  background: #fafafa;
+  background: rgba(255,255,255,0.05);
   cursor: pointer;
   font-size: 1rem;
-  transition: background 0.2s;
+  color: #e0e0e0;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+.answers button:hover {
+  background: rgba(0,255,200,0.1);
+  transform: scale(1.02);
 }
 .answers button.selected {
-  background: #007bff;
-  color: #fff;
+  background: rgba(0,234,255,0.2);
+  box-shadow: 0 0 10px #00eaff;
+}
+.progress-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
 }
 .progress-bar {
-  height: 6px;
-  background: #e0e0e0;
-  border-radius: 3px;
+  flex: 1;
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
   overflow: hidden;
-  margin-bottom: 15px;
+  margin-right: 10px;
+  border: 1px solid rgba(0, 234, 255, 0.15);
 }
 .progress-fill {
   height: 100%;
-  background: #007bff;
+  background: linear-gradient(90deg, #00ff88, #00eaff);
   width: 0%;
   transition: width 0.3s ease;
+  box-shadow: 0 0 10px #00ff88;
+}
+.progress-percent {
+  min-width: 48px;
+  text-align: right;
+  font-size: 0.9rem;
+  color: #9feaff;
 }
 .correct {
-  background: #d4edda;
-  border-color: #28a745;
-  color: #155724;
+  background: rgba(0,255,136,0.15);
+  border-color: #00ff88 !important;
 }
 .incorrect {
-  background: #f8d7da;
-  border-color: #dc3545;
-  color: #721c24;
+  background: rgba(255,75,92,0.15);
+  border-color: #ff4b5c !important;
 }
 .neutral {
-  background: #f1f1f1;
-  color: #555;
+  background: rgba(255,255,255,0.05);
+}
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,234,255,0.4), transparent);
+  margin: 14px 0;
+}
+.question-block {
+  margin-bottom: 18px;
+  text-align: left;
+}
+.answer-chip {
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin-top: 6px;
+  border: 1px solid rgba(255,255,255,0.08);
 }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
@@ -93,22 +136,29 @@ h2 {
 <body>
 
 <div class="card" id="startScreen">
-  <h2>Выберите тест</h2>
+  <h2>🎮 Добро пожаловать в тест ПК‑Клуба</h2>
+  <div class="divider"></div>
   <button class="btn" onclick="startTest('new')">Для новых сотрудников</button>
   <button class="btn" onclick="startTest('adv')">Для повышения квалификации</button>
 </div>
 
 <div class="card" id="quizScreen" style="display:none;">
-  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-container">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-percent" id="progressPercent">0%</div>
+  </div>
   <h2 id="question"></h2>
   <div class="answers" id="answers"></div>
+  <div class="divider"></div>
   <button class="btn" id="nextBtn">Далее</button>
 </div>
 
 <div class="card" id="resultScreen" style="display:none;">
-  <h2>🏁 Результаты теста</h2>
+  <h2>🏆 Результаты</h2>
   <p id="resultText"></p>
+  <div class="divider"></div>
   <div id="allQuestions"></div>
+  <div class="divider"></div>
   <button class="btn" onclick="goToStart()">Вернуться к выбору теста</button>
 </div>
 
@@ -116,10 +166,12 @@ h2 {
 const tests = {
   new: [
     { q: 'Что нужно сделать первым делом перед началом смены?', options: ['Проверить оборудование', 'Сразу включить музыку', 'Сделать кофе'], correct: 0 },
-    { q: 'Как правильно поприветствовать клиента?', options: ['Молча кивнуть', 'Вежливо поздороваться', 'Спросить, зачем пришёл'], correct: 1 }
+    { q: 'Как правильно поприветствовать клиента?', options: ['Молча кивнуть', 'Вежливо поздороваться', 'Спросить, зачем пришёл'], correct: 1 },
+    { q: 'Что делать, если игра не запускается?', options: ['Перезапустить компьютер', 'Удалить Windows', 'Сказать, что не знаете'], correct: 0 }
   ],
   adv: [
-    { q: 'Что такое G-Sync?', options: ['Технология синхронизации кадров', 'Видеокарта', 'Монитор'], correct: 0 }
+    { q: 'Что такое G-Sync?', options: ['Технология синхронизации кадров', 'Видеокарта', 'Монитор'], correct: 0 },
+    { q: 'Какой тип SSD быстрее?', options: ['NVMe', 'SATA', 'HDD'], correct: 0 }
   ]
 };
 
@@ -138,6 +190,7 @@ const nextBtn = document.getElementById('nextBtn');
 const resultText = document.getElementById('resultText');
 const allQuestions = document.getElementById('allQuestions');
 const progressFill = document.getElementById('progressFill');
+const progressPercent = document.getElementById('progressPercent');
 
 function startTest(type) {
   currentTest = tests[type] || [];
@@ -163,7 +216,13 @@ function loadQuestion() {
     };
     aEl.appendChild(btn);
   });
-  progressFill.style.width = ((current) / currentTest.length) * 100 + '%';
+  updateProgress();
+}
+
+function updateProgress() {
+  const percent = Math.round((current / currentTest.length) * 100);
+  progressFill.style.width = percent + '%';
+  progressPercent.textContent = percent + '%';
 }
 
 nextBtn.onclick = () => {
@@ -183,19 +242,20 @@ function showResults() {
   quizScreen.style.display = 'none';
   resultScreen.style.display = 'block';
   progressFill.style.width = '100%';
+  progressPercent.textContent = '100%';
   resultText.textContent = `Ваш результат: ${score} из ${currentTest.length}`;
-  allQuestions.innerHTML = '';
 
+  allQuestions.innerHTML = '';
   currentTest.forEach((q, idx) => {
-    let block = `<div style="margin-bottom:15px; text-align:left;">
+    let block = `<div class="question-block">
       <strong>${idx + 1}. ${q.q}</strong><br>`;
     q.options.forEach((opt, i) => {
       let cls = 'neutral';
       if (i === q.correct) cls = 'correct';
       if (userAnswers[idx] === i && i !== q.correct) cls = 'incorrect';
-      block += `<div class="${cls}" style="padding:5px; border-radius:4px; margin-top:4px;">${opt}</div>`;
+      block += `<div class="answer-chip ${cls}">${opt}</div>`;
     });
-    block += '</div>';
+    block += '</div><div class="divider"></div>';
     allQuestions.innerHTML += block;
   });
 }
@@ -204,6 +264,7 @@ function goToStart() {
   resultScreen.style.display = 'none';
   startScreen.style.display = 'block';
   progressFill.style.width = '0%';
+  progressPercent.textContent = '0%';
 }
 </script>
 </body>
